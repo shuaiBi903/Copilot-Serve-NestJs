@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest]使用NestJs编写方便使用copilot项目的api
 
 ## Installation
 
