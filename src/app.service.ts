@@ -40,8 +40,8 @@ export class AppService {
       // 转为json对象
       let fileJson = JSON.parse(file)
       const historyToken = fileJson[token]
-      console.log("historyToken>>>>>>>>>>>>>>>>>>>>>>>>>>", historyToken.expiration, Math.floor(Date.now() / 1000))
-      if (historyToken && historyToken.expiration > Math.floor(Date.now() / 1000)) {
+      console.log("historyToken>>>>>>>>>>>>>>>>>>>>>>>>>>", historyToken.expiration, +Date.now())
+      if (historyToken && historyToken.expiration > Date.now() / 1000) {
         console.log("读取历史文件>>>>>>>>>>>>>>>>>>>>>>>>>>")
         return {
           token: historyToken.token
@@ -114,7 +114,7 @@ export class AppService {
     }
     data[token] = {
       token: client.data.token,
-      expiration: client.data.expires_at - 1000 * 60 * 5
+      expiration: new Date().getTime() + 1000 * 60 * 60 * 20
     }
     fs.writeFileSync(this.filePath, JSON.stringify(data))
     return {
