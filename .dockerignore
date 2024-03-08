@@ -1,0 +1,12 @@
+# Exclude node_modules directory
+node_modules/
+
+# Exclude log files
+*.log
+
+# Exclude temporary files
+*.tmp
+
+# Exclude build artifacts
+/build/
+/dist/
