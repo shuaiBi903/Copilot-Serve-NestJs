@@ -29,6 +29,20 @@
 ## 如何使用
 
 1. 安装并启动 copilot-gpt4-service 服务，如本地启动后，API 默认地址为：`http://127.0.0.1:3000`;
+curl --request POST \
+  --url http://localhost:3000/v1/chat/completions \
+  --header 'Authorization: Bearer ${token}' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "stream": false,
+    "model": "gpt-4",
+    "messages": [
+        {
+            "role": "user",
+            "content": "孙姓简介"
+        }
+    ]
+}'
 2. 获取你的 GitHub 账号 GitHub Copilot Plugin Token:
   **Windows 平台获取**
   下载批处理脚本，双击运行即可：[get_copilot_token.bat](https://raw.githubusercontent.com/aaamoon/copilot-gpt4-service/master/shells/get_copilot_token.bat)。
