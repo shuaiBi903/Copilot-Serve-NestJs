@@ -7,7 +7,7 @@ const fs = require('fs')
 const path = require('path')
 @Injectable()
 export class AppService {
-  private readonly filePath = path.join(__dirname, '../token.json')
+  private readonly filePath = path.join(__dirname, './token.json')
 
   private readonly getAuthorizationUrl = "https://api.github.com/copilot_internal/v2/token"
   // 请求
@@ -48,6 +48,7 @@ export class AppService {
         }
       }
     }
+    // 不存在则重新获取token
     const data = await this.writeTokenToFile(token)
     if (data.data) {
       return {
