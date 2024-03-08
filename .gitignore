@@ -2,7 +2,7 @@
 /dist
 /node_modules
 /build
-
+token.json
 # Logs
 logs
 *.log
