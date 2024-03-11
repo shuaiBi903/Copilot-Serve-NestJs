@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Request } from 'express';
 import { SendMessage } from './type';
 import { v4 as uuidv4 } from 'uuid';
+import { WorkerPoolService } from './app.WorkerPoolService';
 const fs = require('fs')
 const path = require('path')
 @Injectable()
@@ -10,6 +11,7 @@ export class AppService {
   private readonly filePath = path.join(__dirname, './token.json')
 
   private readonly getAuthorizationUrl = "https://api.github.com/copilot_internal/v2/token"
+  constructor(private readonly workerPoolService: WorkerPoolService) { }
   // 请求
   async chatCompletions(req: Request, body: SendMessage) {
     const appToken = this.getAuthorization(req)
@@ -120,5 +122,47 @@ export class AppService {
     return {
       data: client.data.token
     }
+  }
+
+  // 启动worker
+  async startWorkerChat(req: Request, body: SendMessage) {
+    const appToken = this.getAuthorization(req);
+    const worker = this.workerPoolService.getWorker();
+    // 获取一个线程
+    console.log('worker>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    if (!worker) {
+      console.log('All workers are busy. Please try again later.')
+      return Promise.resolve({ error: 'All workers are busy. Please try again later.' });
+    }
+    // 判断worker是否有错误
+    if (worker.threadId === 0) {
+      console.log('worker has error>>>>>>>>>>>>>>>>>>>>>>>>>>')
+      return Promise.resolve({ error: 'worker has error' });
+    }
+
+
+    return new Promise((resolve, reject) => {
+      worker.postMessage({ appToken, body });
+
+      worker.once('message', (result) => {
+        this.workerPoolService.releaseWorker(worker);
+        resolve(result);
+      });
+
+      worker.once('error', (error: HttpException) => {
+        // 删除线程并关闭, 用于线程异常退出, 重新创建线程
+        this.workerPoolService.removeWorker(worker);
+        console.log('error>>>>>>线程释放')
+        // throw error
+        reject(error);
+      });
+
+      worker.once('exit', (code) => {
+        if (code !== 0) {
+          this.workerPoolService.releaseWorker(worker);
+          reject(new Error(`Worker stopped with exit code ${code}`));
+        }
+      });
+    })
   }
 }
