@@ -31,8 +31,19 @@ class WorkerService {
             // 返回一个错误的响应
             throw new HttpException('token is invalid', 400)
         }
-        const data = await this.sendMessagesToCopilot(body, authorization.token)
-        return data
+        let reRequest = 0
+        try {
+            const data = await this.sendMessagesToCopilot(body, authorization.token)
+            return data
+        } catch (error) {
+            // 重新请求
+            if (!reRequest) {
+                reRequest++ // 重新请求次数
+                const res = await this.writeTokenToFile(appToken)
+                const data = await this.sendMessagesToCopilot(body, res.data)
+                return data
+            }
+        }
     }
     getAuthorization(req: Request): string {
         const copilotToken = (req.headers as any)?.authorization ? (req.headers as any)?.authorization.replace('Bearer ', '') : '';

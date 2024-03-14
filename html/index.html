@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>copilot</title>
+    <style>
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: start;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .item {
+            margin-bottom: 20px;
+        }
+
+        .item span:first-child {
+            margin-right: 10px;
+            width: 120px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <div style=" padding: 10px;">
+            <h1>copilot-toekn获取程序</h1>
+        </div>
+        <div class="item"><span>device_code:</span><span id="device_code"></span></div>
+        <div class="item"><span>user_code:</span><span id="user_code"></span></div>
+        <div class="item"><span>verification_uri:</span><span id="verification_uri"></span></div>
+        <div>
+            <h3> !请在(<span id="miao"></span>)秒内完成授权</h3>
+        </div>
+        <div style="padding: 10px;">
+            >1. 复制code后点击登录
+            <button id="copycode">复制code</button>
+        </div>
+        <div style="padding: 10px;">
+            >2. 后点击登录进行授权
+            <button id="log">登录</button>
+        </div>
+        <div style="padding: 10px;">
+            >3. 授权完成点击获取token
+            <button id="token">获取token</button>
+            <div id="showToken"></div>
+        </div>
+    </div>
+    <script>
+        // 获取url的参数
+        const url = new URL(window.location.href)
+        const response = JSON.parse(url.searchParams.get('response'))
+        console.log(response)
+        document.getElementById('device_code').innerText = response.device_code
+        document.getElementById('user_code').innerText = response.user_code
+        document.getElementById('verification_uri').innerText = response.verification_uri
+        const log = document.getElementById('log')
+        const tokenBtn = document.getElementById('token')
+        const showToken = document.getElementById('showToken')
+        const copycode = document.getElementById('copycode')
+        log.onclick = function () {
+            //    打开新窗口
+            window.open(response.verification_uri)
+        }
+        copycode.onclick = () => {
+            const code = response.user_code
+            const input = document.createElement('input')
+            input.value = code
+            document.body.appendChild(input)
+            input.select()
+            document.execCommand('copy')
+            document.body.removeChild(input)
+            alert('复制成功')
+        }
+        let time = 300
+        const miao = document.getElementById('miao')
+        miao.innerText = time
+        const t = setInterval(() => {
+            time--
+            miao.innerText = time
+            if (time <= 0) {
+                clearInterval(t)
+                window.open('/get-ghbToken')
+                window.close()
+            }
+        }, 1000)
+        tokenBtn.onclick = async () => {
+            // 获取token
+            const res = await fetch('/pollAuth?device_code=' + response.device_code, {
+                method: 'GET',
+                headers: this.headers,
+            })
+            const data = await res.json()
+            console.log(data)
+            if (data.access_token) {
+                showToken.innerText = data.access_token
+            }
+        }
+    </script>
+</body>
+
+</html>
