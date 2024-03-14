@@ -22,8 +22,7 @@ curl --request POST \
     ]
 }'
 2. 获取你的 GitHub 账号 GitHub Copilot Plugin Token:
-  **Windows 平台获取**
-  下载批处理脚本，双击运行即可：[get_copilot_token.bat](https://raw.githubusercontent.com/aaamoon/copilot-gpt4-service/master/shells/get_copilot_token.bat)。
+  - `http://127.0.0.1:3000/get-ghbToken`:获取toekn
 3. 安装第三方客户端，如：[ChatGPT-Next-Web](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)，在设置中填入 copilot-gpt4-service 的 API 地址和 GitHub Copilot Plugin Token，即可使用 GPT-4 模型进行对话
 
 4. 多线程支持
