@@ -51,6 +51,17 @@
             <button id="token">获取token</button>
             <div id="showToken"></div>
         </div>
+        <ul>
+            <h3>某宝购买的远程授权脚本的token和token url怎么获取呢：</h3>
+            <li class="li"> 1. 首先，你得先用他的脚本进行授权完跑一边</li>
+            <li class="li"> 2.
+                在你windows电脑文件夹路径中：C:\Users\你的win用户名\AppData\Local\github-copilot，找到hosts.json，里面就有oauth_token就是类似与ghu_Xxx的token，只不过相当于走了他的服务器进行中转分发转发的token，copilot_token_url就是他的token
+                url服务器地址，用于转换获取copilot内部鉴权token的地址
+            </li>
+            <li class="li"> - 如果没有的话是插件授权的直接把插件包改个后缀.zip然后解压进源码里查看这两个参数，具体就不多讲解了，目前市面上大多数都是可以直接在win本地路径中找到</li>
+            <li> 方法来自: <a href="https://github.com/mouxans/copilot-api"> mouxangithub 程序员小刘</a></li>
+        </ul>
+
     </div>
     <script>
         // 获取url的参数

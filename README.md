@@ -96,3 +96,10 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+## 开源协议
+
+[MIT](https://opensource.org/license/mit/)
+
+## Star历史
+
+![Star History Chart](https://api.star-history.com/svg?repos=mouxans/copilot-api&type=Date)
