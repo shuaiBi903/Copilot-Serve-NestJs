@@ -5,7 +5,10 @@
 - `http://127.0.0.1:3000/get-ghbToken`:获取toekn
 - `POST /v1/chat/completions`: 对话 API
 ## 如何使用
-
+-Docker使用:
+`docker compose up -d`
+-非docker :
+安装nodejs npm install   && npm run start
 1. 安装并启动 copilot-gpt4-service 服务，如本地启动后，API 默认地址为：`http://127.0.0.1:3000`;
 curl --request POST \
   --url http://localhost:3000/v1/chat/completions \
