@@ -5,11 +5,6 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 3000:3000
-    env_file:
-      - .env
-    env:
-      - WORKER: 0
-      - LIMIT: 20
-      - PORT: 3000
+      - 3003:3000
+
     command: pnpm run start:prod
