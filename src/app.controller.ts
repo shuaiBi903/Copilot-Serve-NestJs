@@ -66,7 +66,7 @@ export class AppController {
   @Post(':url/v1/chat/completions')
   async handleCompletionsRoutes(@Param('url') url: string, @Req() req: Request, @Body() body: SendMessage) {
     url = url.replace(/&/g, '/')
-    console.log("url", url)
+    // console.log("url", url)
     const WORKER = this.configService.get("WORKER")
     if (!WORKER) {
       return await this.appService.chatCompletions(req, body, url);

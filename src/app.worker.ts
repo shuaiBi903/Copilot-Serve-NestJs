@@ -55,7 +55,6 @@ class WorkerService {
 
     async getAuthorizationFromToken(token: string): Promise<{ token: string }> {
 
-
         // 判断文件是否存在
         if (fs.existsSync(this.filePath)) {
             // 读取文件
@@ -63,8 +62,7 @@ class WorkerService {
             // 转为json对象
             let fileJson = JSON.parse(file)
             const historyToken = fileJson[token]
-            console.log("historyToken>>>>>>>>>>>>>>>>>>>>>>>>>>", historyToken.expiration, +Date.now())
-            if (historyToken && historyToken.expiration > Date.now() / 1000) {
+            if (historyToken && historyToken.token && historyToken.expiration > Date.now() / 1000) {
                 console.log("读取历史文件>>>>>>>>>>>>>>>>>>>>>>>>>>")
                 return {
                     token: historyToken.token
@@ -72,50 +70,72 @@ class WorkerService {
             }
         }
         // 不存在则重新获取token
-        const data = await this.writeTokenToFile(token)
-        if (data.data) {
-            return {
-                token: data.data
+        try {
+            console.log(token, "重新获取token");
+
+            const data = await this.writeTokenToFile(token)
+            console.log("重新获取的token", data)
+            if (data.data) {
+                return {
+                    token: data.data
+                }
             }
+        } catch (error) {
+
+            throw new HttpException(error || "错误", 400)
         }
     }
 
     // 写入token
     async writeTokenToFile(token: string) {
-        console.log("getAuthorizationUrl", getAuthorizationUrl)
-        const client = await this.getToken(getAuthorizationUrl || this.getAuthorizationUrl, token)
-        let data = {}
-        if (fs.existsSync(this.filePath)) {
-            console.log("文件存在>>>>>>>>>>>>>>>>>>>>>>>>>>")
-            data = JSON.parse(fs.readFileSync(this.filePath, 'utf-8'))
-        }
-        data[token] = {
-            token: client.data.token,
-            expiration: new Date().getTime() + 1000 * 60 * 60 * 20
-        }
-        fs.writeFileSync(this.filePath, JSON.stringify(data))
-        return {
-            data: client.data.token
+        try {
+            const client = await this.getToken(getAuthorizationUrl || this.getAuthorizationUrl, token)
+            let data = {}
+            if (fs.existsSync(this.filePath)) {
+                console.log("文件存在>>>>>>>>>>>>>>>>>>>>>>>>>>")
+                const fileData = await new Promise((resolve, reject) => {
+                    fs.readFile(this.filePath, 'utf-8', (err, data) => {
+                        if (err) {
+                            reject(err)
+                        }
+                        resolve(data)
+                    })
+                })
+                data = JSON.parse(fileData as string)
+            }
+
+            client?.data?.token && (data[token] = {
+                token: client.data.token,
+                expiration: new Date().getTime() + 1000 * 60 * 60 * 20
+            })
+            fs.writeFileSync(this.filePath, JSON.stringify(data))
+            return {
+                data: client.data.token
+            }
+        } catch (error) {
+            throw new HttpException(error || "token或url可能有误", 400)
         }
     }
 
     // 获取token
     async getToken(getAuthorizationUrl: string, token: string) {
-        const client = await axios.get(getAuthorizationUrl, {
-            headers: {
-                'Authorization': `token ${token}`,
-                'Editor-Version': 'vscode/1.85.2',
-                'Editor-Plugin-Version': 'copilot-chat/0.11.1',
-                'User-Agent': 'GitHubCopilotChat/0.11.1',
-                'Accept': '*/*',
-                'Content-Type': 'application/json',
+
+        try {
+            const client = await axios.get(getAuthorizationUrl, {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Editor-Version': 'vscode/1.85.2',
+                    'Editor-Plugin-Version': 'copilot-chat/0.11.1',
+                    'User-Agent': 'GitHubCopilotChat/0.11.1',
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                }
+            })
+            return {
+                data: client.data
             }
-        }).catch((error) => {
-            const { response: { status: code, data } } = error
-            throw new HttpException(data, code)
-        })
-        return {
-            data: client.data
+        } catch (error) {
+            throw new HttpException("token获取失败",400)
         }
     }
 

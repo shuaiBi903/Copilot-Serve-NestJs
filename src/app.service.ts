@@ -45,7 +45,6 @@ export class AppService {
       // 转为json对象
       let fileJson = JSON.parse(file)
       const historyToken = fileJson[token]
-      console.log("historyToken>>>>>>>>>>>>>>>>>>>>>>>>>>", historyToken.expiration, +Date.now())
       if (historyToken && historyToken.expiration > Date.now() / 1000) {
         console.log("读取历史文件>>>>>>>>>>>>>>>>>>>>>>>>>>")
         return {
