@@ -7,9 +7,11 @@
 ## 如何使用
 -Docker使用:
 `docker compose up -d`
+
 -非docker :
 安装nodejs npm install   && npm run start
 1. 安装并启动 copilot-gpt4-service 服务，如本地启动后，API 默认地址为：`http://127.0.0.1:3000`;
+   
 curl --request POST \
   --url http://localhost:3000/v1/chat/completions \
   --header 'Authorization: Bearer ${token}' \
@@ -24,7 +26,7 @@ curl --request POST \
         }
     ]
 }'
-2. 获取你的 GitHub 账号 GitHub Copilot Plugin Token:
+3. 获取你的 GitHub 账号 GitHub Copilot Plugin Token:
   - `http://127.0.0.1:3000/get-ghbToken`:获取toekn
 3. 安装第三方客户端，如：[ChatGPT-Next-Web](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)，在设置中填入 copilot-gpt4-service 的 API 地址和 GitHub Copilot Plugin Token，即可使用 GPT-4 模型进行对话
 
