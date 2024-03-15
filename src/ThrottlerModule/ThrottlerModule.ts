@@ -7,7 +7,7 @@ import { ConfigService } from "@nestjs/config"
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
                 // 获取配置文件中的限流配置,或无限制
-                const LIMIT = configService.get('THROTTLE_LIMIT') || 0;
+                const LIMIT = configService.get('LIMIT') || 10000;
                 return {
                     errorMessage: "请求频繁，请稍后再试!",
                     throttlers: [

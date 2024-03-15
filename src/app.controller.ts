@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, Post, Query, Req, Res, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Param, Post, Query, Req, Res, UseFilters } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Request } from 'express';
 import { HttpExceptionFilter } from './http-exception.filter';
@@ -61,5 +61,12 @@ export class AppController {
   async pollAuth(@Query('device_code') device_code: string) {
     console.log(device_code)
     return await this.appTokenService.pollAuth(device_code)
+  }
+
+  @Get(':url/v1/chat/completions')
+  handleCompletionsRoutes(@Param('url') url: string) {
+    // url 参数会包含你的 URL（比如 'https://www.baidu.com/'）
+    // 注意：这个 url 需要进行 URL 编码才能正确传递
+    return `This route handler will match all paths with ${url}`;
   }
 }
