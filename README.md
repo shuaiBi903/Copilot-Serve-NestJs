@@ -42,8 +42,9 @@ curl --request POST \
   PORT=3000 :启动端口`
 ### 使用某宝的服务
   - 获取某宝的服务
-    1.  首先，你得先用他的脚本进行授权完跑一边
-    2.  在你windows电脑文件夹路径中：C:\Users\你的win用户名\AppData\Local\github-copilot，找到hosts.json，里面就有oauth_token就是类似与ghu_Xxx的token，只不过相当于走了他的服务器进行中转分发转发的token，copilot_token_url就是他的token url服务器地址，用于转换获取copilot内部鉴权token的地址 - - - -如果没有的话是插件授权的直接把插件包改个后缀.zip然后解压进源码里查看这两个参数，具体就不多讲解了，目前市面上大多数都是可以直接在win本地路径中找到
+   `
+    -  首先，你得先用他的脚本进行授权完跑一边
+    -  在你windows电脑文件夹路径中：C:\Users\你的win用户名\AppData\Local\github-copilot，找到hosts.json，里面就有oauth_token就是类似与ghu_Xxx的token，只不过相当于走了他的服务器进行中转分发转发的token，copilot_token_url就是他的token url服务器地址，用于转换获取copilot内部鉴权token的地址 - - - -如果没有的话是插件授权的直接把插件包改个后缀.zip然后解压进源码里查看这两个参数，具体就不多讲解了，目前市面上大多数都是可以直接在win本地路径中找到`
   - 使用某宝服务
     ` 
     - 将某宝的url中的/替换为&
