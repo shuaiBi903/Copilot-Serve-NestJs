@@ -9,7 +9,7 @@
 `docker compose up -d`
 
 -非docker :
-安装nodejs npm install   && npm run start
+安装node后 npm install  && npm run start
 1. 安装并启动 copilot-gpt4-service 服务，如本地启动后，API 默认地址为：`http://127.0.0.1:3000`;
    
 curl --request POST \
