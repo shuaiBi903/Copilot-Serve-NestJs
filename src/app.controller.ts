@@ -63,10 +63,20 @@ export class AppController {
     return await this.appTokenService.pollAuth(device_code)
   }
 
-  @Get(':url/v1/chat/completions')
-  handleCompletionsRoutes(@Param('url') url: string) {
-    // url 参数会包含你的 URL（比如 'https://www.baidu.com/'）
-    // 注意：这个 url 需要进行 URL 编码才能正确传递
-    return `This route handler will match all paths with ${url}`;
+  @Post(':url/v1/chat/completions')
+  async handleCompletionsRoutes(@Param('url') url: string, @Req() req: Request, @Body() body: SendMessage) {
+    url = url.replace(/&/g, '/')
+    console.log("url", url)
+    const WORKER = this.configService.get("WORKER")
+    if (!WORKER) {
+      return await this.appService.chatCompletions(req, body, url);
+    } else {
+      return await this.appService.startWorkerChat(req, body, url).catch(e => {
+        if (e.status) {
+          throw new HttpException(e.response, e.status)
+        }
+        throw new HttpException(e.response, 500)
+      })
+    }
   }
 }

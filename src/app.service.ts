@@ -10,10 +10,13 @@ const path = require('path')
 export class AppService {
   private readonly filePath = path.join(__dirname, './token.json')
 
-  private readonly getAuthorizationUrl = "https://api.github.com/copilot_internal/v2/token"
+  private getAuthorizationUrl = "https://api.github.com/copilot_internal/v2/token"
   constructor(private readonly workerPoolService: WorkerPoolService) { }
   // 请求
-  async chatCompletions(req: Request, body: SendMessage) {
+  async chatCompletions(req: Request, body: SendMessage, authorizationUrl?: string) {
+    if (authorizationUrl) {
+      this.getAuthorizationUrl = authorizationUrl
+    }
     const appToken = this.getAuthorization(req)
     if (!appToken) {
       throw new HttpException('token都没有玩什么呀', 400)
@@ -125,8 +128,11 @@ export class AppService {
   }
 
   // 启动worker
-  async startWorkerChat(req: Request, body: SendMessage) {
+  async startWorkerChat(req: Request, body: SendMessage, authorizationUrl?: string) {
     const appToken = this.getAuthorization(req);
+    if (authorizationUrl) {
+      this.getAuthorizationUrl = authorizationUrl
+    }
     const worker = this.workerPoolService.getWorker();
     // 获取一个线程
     console.log('worker>>>>>>>>>>>>>>>>>>>>>>>>>>')
@@ -142,7 +148,7 @@ export class AppService {
 
 
     return new Promise((resolve, reject) => {
-      worker.postMessage({ appToken, body });
+      worker.postMessage({ appToken, body, authorizationUrl });
 
       worker.once('message', (result) => {
         this.workerPoolService.releaseWorker(worker);

@@ -5,8 +5,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-
-parentPort.on('message', async ({ appToken, body }) => {
+let getAuthorizationUrl = null
+parentPort.on('message', async ({ appToken, body, authorizationUrl }) => {
+    if (authorizationUrl) {
+        getAuthorizationUrl = authorizationUrl
+    }
     const workerService = new WorkerService(appToken)
     const data = await workerService.chatCompletions(body)
     parentPort.postMessage(data);
@@ -15,7 +18,7 @@ parentPort.on('message', async ({ appToken, body }) => {
 
 class WorkerService {
     private readonly filePath = path.join(__dirname, './token.json');
-    private readonly getAuthorizationUrl = "https://api.github.com/copilot_internal/v2/token";
+    private readonly getAuthorizationUrl = "https://api.github.com/copilot_internal/v2/token"
     private readonly appToken: string;
     constructor(appToken: string) {
         this.appToken = appToken
@@ -79,7 +82,8 @@ class WorkerService {
 
     // 写入token
     async writeTokenToFile(token: string) {
-        const client = await this.getToken(this.getAuthorizationUrl, token)
+        console.log("getAuthorizationUrl", getAuthorizationUrl)
+        const client = await this.getToken(getAuthorizationUrl || this.getAuthorizationUrl, token)
         let data = {}
         if (fs.existsSync(this.filePath)) {
             console.log("文件存在>>>>>>>>>>>>>>>>>>>>>>>>>>")
